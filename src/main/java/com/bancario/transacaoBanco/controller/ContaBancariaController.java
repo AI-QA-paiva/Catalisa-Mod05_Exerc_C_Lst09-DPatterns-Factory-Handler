@@ -4,6 +4,8 @@ import com.bancario.transacaoBanco.model.ContaBancariaModel;
 import com.bancario.transacaoBanco.model.transacao.TipoDeEntradaFactory;
 import com.bancario.transacaoBanco.service.ContaBancariaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,18 +18,20 @@ public class ContaBancariaController {
     private ContaBancariaService contaBancariaService;
 
     @GetMapping (path = "/conta")
-    public List<ContaBancariaModel> exibirTodasAsContas(){
-        return contaBancariaService.exibirTodasAsContas();
+    public ResponseEntity<List<ContaBancariaModel>> exibirTodasAsContas(){
+        List<ContaBancariaModel> listaContas = contaBancariaService.exibirTodasAsContas();
+        return ResponseEntity.ok(listaContas); //contaBancariaService.exibirTodasAsContas();
     }
 
     @GetMapping (path = "/conta/{id}")
-    public Optional<ContaBancariaModel> exibirContaBancariaEspecifica (@PathVariable Long id){
-        return contaBancariaService.exibirContaEspecifica(id);
+    public ResponseEntity<Optional<ContaBancariaModel>> exibirContaBancariaEspecifica (@PathVariable Long id){
+        return ResponseEntity.ok(contaBancariaService.exibirContaEspecifica(id));
     }
 
     @PostMapping (path = "/conta")
-    public ContaBancariaModel cadastrarContaBancaria(@RequestBody ContaBancariaModel contaBancariaModel, TipoDeEntradaFactory tipoDeEntradaFactory){
-        return contaBancariaService.cadastrarNovaConta(contaBancariaModel, tipoDeEntradaFactory);
+    public ResponseEntity<ContaBancariaModel> cadastrarContaBancaria(@RequestBody ContaBancariaModel contaBancariaModel, TipoDeEntradaFactory tipoDeEntradaFactory){
+        ContaBancariaModel contas = contaBancariaService.cadastrarNovaConta(contaBancariaModel, tipoDeEntradaFactory);
+        return new ResponseEntity<>(contas, HttpStatus.CREATED);
     }
 
     @DeleteMapping (path = "/conta/{id}")
